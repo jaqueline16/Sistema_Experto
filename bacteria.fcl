@@ -1,0 +1,82 @@
+FUNCTION_BLOCK tipper	// Block definition (there may be more than one block per file)
+
+// Define input variables
+VAR_INPUT				
+	tamano : REAL;
+	forma : REAL;
+	unidades : REAL;
+END_VAR
+
+// Define output variable
+VAR_OUTPUT				
+	result: REAL;
+
+END_VAR
+
+// Fuzzify input variable 'tamano': {'chica', 'normal' , 'grande'}
+FUZZIFY tamano			
+	TERM chica := (0, 1) (40, 0) ; 
+	TERM normal := (30, 0) (40,1) (60,1) (70,0);
+	TERM grande := (60, 0) (100, 1);
+END_FUZZIFY
+
+// Fuzzify input variable 'forma': { 'mala', 'regular','optima' }
+FUZZIFY forma			
+	TERM mala := (0, 1) (40, 0) ; 
+	TERM regular := (30, 0) (40,1) (60,1) (70,0);
+	TERM optima := (60, 0) (100, 1);
+END_FUZZIFY
+
+// Fuzzify input variable 'unidades': { 'normal', 'alto','muyalto' }
+FUZZIFY unidades			
+	TERM normal := (0, 1) (40, 0) ; 
+	TERM alto := (30, 0) (40,1) (60,1) (70,0);
+	TERM muyalto := (60, 0) (100, 1);
+END_FUZZIFY
+
+// Defzzzify output variable 'result' : {'contable', 'nocontable',}
+DEFUZZIFY result			
+	TERM nocontable := (0,1) (55,0);
+	TERM contable := (45,0) (100,1);
+	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
+	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
+END_DEFUZZIFY
+
+// Inference rules
+RULEBLOCK No1
+	AND : MIN;	// Use 'min' for 'and'
+	ACT : MIN;	// Use 'min' activation method
+	ACCU : MAX;	// Use 'max' accumulation method
+
+	RULE 1 : IF tamano IS grande AND forma IS optima AND unidades IS muyalto THEN result IS nocontable;
+	RULE 2 : IF tamano IS grande AND forma IS optima AND unidades IS alto THEN result IS nocontable;
+	RULE 3 : IF tamano IS grande AND forma IS optima AND unidades IS normal THEN result IS nocontable;
+	RULE 4 : IF tamano IS grande AND forma IS regular AND unidades IS muyalto THEN result IS nocontable;
+	RULE 5 : IF tamano IS grande AND forma IS regular AND unidades IS alto THEN result IS nocontable;
+	RULE 6 : IF tamano IS grande AND forma IS regular AND unidades IS normal THEN result IS nocontable;
+	RULE 7 : IF tamano IS grande AND forma IS mala AND unidades IS muyalto THEN result IS nocontable;
+	RULE 8 : IF tamano IS grande AND forma IS mala AND unidades IS alto THEN result IS nocontable;
+	RULE 9 : IF tamano IS grande AND forma IS mala AND unidades IS normal THEN result IS nocontable;
+	RULE 10 : IF tamano IS normal AND forma IS optima AND unidades IS muyalto THEN result IS contable;
+	RULE 11 : IF tamano IS normal AND forma IS optima AND unidades IS alto THEN result IS contable;
+	RULE 12 : IF tamano IS normal AND forma IS optima AND unidades IS normal THEN result IS contable;
+	RULE 13 : IF tamano IS normal AND forma IS regular AND unidades IS muyalto THEN result IS contable;
+	RULE 14 : IF tamano IS normal AND forma IS regular AND unidades IS alto THEN result IS contable;
+	RULE 15 : IF tamano IS normal AND forma IS regular AND unidades IS normal THEN result IS contable;
+	RULE 16 : IF tamano IS normal AND forma IS mala AND unidades IS muyalto THEN result IS nocontable;
+	RULE 17 : IF tamano IS normal AND forma IS mala AND unidades IS alto THEN result IS nocontable;
+	RULE 18 : IF tamano IS normal AND forma IS mala AND unidades IS normal THEN result IS nocontable;
+	RULE 19 : IF tamano IS chica AND forma IS optima AND unidades IS muyalto THEN result IS contable;
+	RULE 20 : IF tamano IS chica AND forma IS optima AND unidades IS alto THEN result IS contable;
+	RULE 21 : IF tamano IS chica AND forma IS optima AND unidades IS normal THEN result IS contable;
+	RULE 22 : IF tamano IS chica AND forma IS regular AND unidades IS muyalto THEN result IS contable;
+	RULE 23 : IF tamano IS chica AND forma IS regular AND unidades IS alto THEN result IS contable;
+	RULE 24 : IF tamano IS chica AND forma IS regular AND unidades IS normal THEN result IS contable;
+	RULE 25 : IF tamano IS chica AND forma IS mala AND unidades IS muyalto THEN result IS nocontable;
+	RULE 26 : IF tamano IS chica AND forma IS mala AND unidades IS alto THEN result IS nocontable;
+	RULE 27 : IF tamano IS chica AND forma IS mala AND unidades IS normal THEN result IS nocontable;
+
+	
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
